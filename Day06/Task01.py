@@ -49,3 +49,41 @@ In this example, after 18 days, there are a total of 26 fish. After 80 days, the
 
 Find a way to simulate lanternfish. How many lanternfish would there be after 80 days?
 """
+
+
+input = ""
+with open('input.txt') as f:
+    for line in f:
+        input = input + line.strip()
+
+char_list = input.split(',', -1)
+char_mapped_to_int = map(int, char_list)
+fishies = list(char_mapped_to_int)
+
+extra_fishies = []
+
+day_counter = 0
+days = 80
+while day_counter < days:
+
+    index = 0
+    length = len(fishies)
+    while index < length:
+
+        if fishies[index] > 0:
+            fishies[index] = fishies[index] - 1
+        else:
+            fishies[index] = 6
+            extra_fishies.append(8)
+
+        index += 1
+
+        if index == length:
+            fishies = fishies + extra_fishies
+            extra_fishies = []
+
+    day_counter += 1
+    print('Processed Day: ' + str(day_counter) + ' fishies: ' + str(len(fishies)))
+
+print('Total fishies after ' + str(days) + ' days: ' + str(len(fishies)))
+
