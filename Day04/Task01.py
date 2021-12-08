@@ -54,5 +54,20 @@ The score of the winning board can now be calculated. Start by finding the sum o
 
 To guarantee victory against the giant squid, figure out which board will win first. What will your final score be if you choose that board?
 
-
 """
+from BingoProcessor import get_calls_file, process_boards_file
+
+if __name__ == '__main__':
+    # get file content
+    calls = get_calls_file('calls.txt')
+
+    board_results = process_boards_file('boards.txt', calls)
+
+    quickest_win = 999999
+    quickest_win_score = 0
+    for board_result in board_results:
+        if board_result['call_count'] < quickest_win:
+            quickest_win = board_result['call_count']
+            quickest_win_score = board_result['board_value']
+
+    print('quickest_win: ' + str(quickest_win) + " with score: " + str(quickest_win_score))
