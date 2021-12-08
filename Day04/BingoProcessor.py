@@ -12,6 +12,9 @@ def get_calls_file(filename):
 
 
 def has_winning_row(board):
+    """
+    Check if the board has a winning row, return true if so
+    """
     row_count = 0
     while row_count < len(board):
         cell_count = 0
@@ -29,6 +32,9 @@ def has_winning_row(board):
 
 
 def has_winning_column(board):
+    """
+    Check if the board has a winning column, return true if so
+    """
     columns = len(board[0])
     cell_count = 0
     while cell_count < columns:
@@ -48,8 +54,8 @@ def has_winning_column(board):
 
 def is_winning_board(board):
     """
-    check whether a row is marked
-    check whether a column is marked
+    check whether a row is winning
+    check whether a column is winning
     """
     return has_winning_row(board) or has_winning_column(board)
 
