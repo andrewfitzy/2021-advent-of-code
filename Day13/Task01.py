@@ -101,4 +101,233 @@ The instructions made a square!
 The transparent paper is pretty big, so for now, focus on just completing the first fold. After the first fold in the example above, 17 dots are visible - dots that end up overlapping after the fold is completed count as a single dot.
 
 How many dots are visible after completing just the first fold instruction on your transparent paper?
+
+Your puzzle answer was 704.
+
+The first half of this puzzle is complete! It provides one gold star: *
+
+--- Part Two ---
+Finish folding the transparent paper according to the instructions. The manual says the code is always eight capital letters.
+
+What code do you use to activate the infrared thermal imaging camera system?
 """
+
+
+def get_input(filename):
+    """
+    Takes a filename and returns a list of co-ordinates from the file
+    """
+    output = []
+    with open(filename) as f:
+        for line in f:
+            tmp_line = line.strip()
+            char_list = tmp_line.split(',', -1)
+            char_mapped_to_int = map(int, char_list)
+            row = list(char_mapped_to_int)
+
+            entry = {
+                'x': row[0],
+                'y': row[1],
+            }
+
+            output.append(entry)
+    return output
+
+
+def get_folds(filename):
+    """
+    Takes a filename and returns a list of folds from the file
+    """
+    output = []
+    with open(filename) as f:
+        for line in f:
+            fold = line.strip()
+            output.append(fold)
+    return output
+
+
+
+def get_paper_dimensions(folds):
+    """
+    takes a list of folds and co-ordinates and builds an unfolded piece of paper
+    """
+    max_x_fold = 0
+    max_y_fold = 0
+    for fold in folds:
+        split_line = fold.split('=', -1)
+        instruction = split_line[0]
+        value = int(split_line[1])
+
+        if value > max_x_fold and instruction == 'fold along x':
+            max_x_fold = value
+
+        if value > max_y_fold and instruction == 'fold along y':
+            max_y_fold = value
+
+    paper_width = (2 * max_x_fold) + 1
+    paper_height = (2 * max_y_fold) + 1
+    return {
+        'width': paper_width,
+        'height': paper_height,
+    }
+
+
+def get_paper(folds, input):
+    """
+    Create a paper given the original input based on a paper determined from the fold index.
+    """
+    dimensions = get_paper_dimensions(folds)
+
+    paper_width = dimensions['width']
+    paper_height = dimensions['height']
+
+    y = 0
+    paper = []
+    while y < paper_height:
+        x = 0
+        row = []
+        while x < paper_width:
+            row.append('.')
+            x += 1
+        paper.append(row)
+        y += 1
+
+    # now we can go through the co-ordinates and change . to #
+    for entry in input:
+        paper[entry['y']][entry['x']] = '#'
+    return paper
+
+
+def fold_along_x(paper, value):
+    """
+    iterate through with 2 indexes
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9....
+    width - (1+i)
+    while i < value
+
+    append to new list for row
+    append each row
+    """
+    paper_height = len(paper)
+    paper_width = len(paper[0])
+
+    print('folding X height: ' + str(paper_height) + ' width: ' + str(paper_width) + ' value: ' + str(value))
+
+    y = 0
+    folded_paper = []
+    while y < paper_height:
+        x = 0
+        row = []
+        while x < value:
+            right_x = paper_width - (1 + x)
+            left = paper[y][x]
+            right = paper[y][right_x]
+
+            cell_value = '#' if left.__eq__('#') or right.__eq__('#') else '.'
+            row.append(cell_value)
+            x += 1
+        folded_paper.append(row)
+        y += 1
+    return folded_paper
+
+
+def fold_along_y(paper, value):
+    """
+    iterate through with 2 indexes
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9....
+    height - (1+i)
+    while i < value
+
+    append to new list for row
+    append each row
+    """
+    paper_height = len(paper)
+    paper_width = len(paper[0])
+
+    print('folding Y height: ' + str(paper_height) + ' width: ' + str(paper_width) + ' value: ' + str(value))
+
+    y = 0
+    folded_paper = []
+    while y < value:
+        x = 0
+        row = []
+        while x < paper_width:
+            bottom_y = paper_height - (1 + y)
+            top = paper[y][x]
+            bottom = paper[bottom_y][x]
+
+            cell_value = '#' if top.__eq__('#') or bottom.__eq__('#') else '.'
+            row.append(cell_value)
+            x += 1
+        folded_paper.append(row)
+        y += 1
+
+    return folded_paper
+
+
+def process_folds(folds, paper):
+    """
+    process the folds, iterating through the folds list doing the fold each time
+    """
+    final_board = paper
+    for fold in folds:
+        split_line = fold.split('=', -1)
+        instruction = split_line[0]
+        value = int(split_line[1])
+
+        if instruction == 'fold along x':
+            final_board = fold_along_x(final_board, value)
+
+        if instruction == 'fold along y':
+            final_board = fold_along_y(final_board, value)
+
+    return final_board
+
+
+def count_marks(paper):
+    """
+    count the number of squares that contain #
+    """
+    paper_height = len(paper)
+    paper_width = len(paper[0])
+
+    print('Count board height: ' + str(paper_height) + ' width: ' + str(paper_width))
+    y = 0
+    hash_count = 0
+    while y < paper_height:
+        x = 0
+        while x < paper_width:
+            cell_value = paper[y][x]
+            if '#' == cell_value:
+                hash_count += 1
+            x += 1
+        y += 1
+    return hash_count
+
+
+def print_paper(folded_paper):
+    for row in folded_paper:
+        print(row)
+
+
+if __name__ == '__main__':
+    """
+    Read in first x fold - x = 2x + 1
+    Read in first y fold - y = 2y + 1
+    build an array seeded with .
+    go through co-ords flipping . to #
+
+    """
+    folds = get_folds('folds.txt')
+    input = get_input('input.txt')
+
+    paper = get_paper(folds, input)
+
+    print('First board: ' + str(count_marks(paper)))
+
+    folded_paper = process_folds(folds, paper)
+
+    marks = count_marks(folded_paper)
+    print('marks_count: ' + str(count_marks(folded_paper)))
+
+    print_paper(folded_paper)
