@@ -99,6 +99,10 @@ Truly incredible - now the small details are really starting to come through. Af
 Start with the original input image and apply the image enhancement algorithm twice, being careful to account for the infinite size of the images. How many pixels are lit in the resulting image?
 """
 
+LIGHT_PIXEL = '#'
+DARK_PIXEL = '.'
+
+
 def get_input(filename):
     """
     Takes a filename and returns a list of lines from the file
@@ -112,6 +116,9 @@ def get_input(filename):
 
 
 def convert_image_to_2d_array(image):
+    """
+    takes the raw bitmap image and converts into a 2d array of values.
+    """
     image_array = []
     for line in image:
         line_array = list(line)
@@ -119,16 +126,16 @@ def convert_image_to_2d_array(image):
     return image_array
 
 
-def pad_image(image_array):
+def pad_image(image_array, pad_char):
     """
     used to add a row of ... to the start and end of the image and also a . at the start and end of each line.
     """
     tmp_image = []
     for row in image_array:
-        new_row = ['.'] + ['.'] + row + ['.'] + ['.']
+        new_row = [pad_char] + [pad_char] + row + [pad_char] + [pad_char]
         tmp_image.append(new_row)
 
-    row_padding = ['.'] * len(tmp_image[0])
+    row_padding = [pad_char] * len(tmp_image[0])
     tmp_image.insert(0, row_padding)
     tmp_image.insert(0, row_padding)
     tmp_image.append(row_padding)
@@ -156,114 +163,111 @@ def get_cell_block(tmp_image, row, column):
     return cell_block
 
 
-def is_border_cell(row_pointer, height, cell_pointer, width):
-    if row_pointer == 1 or cell_pointer == 1:
-        return True
-    elif row_pointer + 1 == height or cell_pointer + 1 == width:
-        return True
-    return False
-
-
-def get_new_cell_value(enhancement_algorithm, cell_block, border_cell, iteration):
+def get_new_cell_value(enhancement_algorithm, cell_block):
     '''
-    At this point, need to know if it's a 'border' cell (1,1 to len-1,len-1), if so and the value is 0 then ignore as
-    otherwise we are flipping the light on/off on the infinite space around the actual image.
+    Convert the cell block to a binary number and find the location in the codex to know what the new cell value will be
     '''
-
     binary_string = []
     for cell in cell_block:
-        if cell == '.':
+        if cell == DARK_PIXEL:
             binary_string.append('0')
         else:
             binary_string.append('1')
     binary_number = ''.join(binary_string)
     decimal_number = int(binary_number, 2)
-    if border_cell and decimal_number == 0 and iteration > 0 and iteration % 2 == 0:
-        return '.'
     new_cell_value = enhancement_algorithm[decimal_number]
     return new_cell_value
+
+
+def is_blinking_image(enhancement_algorithm):
+    """
+    convenience method to work out if the codec causes the image to blink. By default, the infinite space around the
+    image contains . but if position 0 in the codec converts to # it means after the first iteration the infinite space
+    will contain #, this gets flipped again on the next iteration if the codec contains . at position 511.
+    """
+    return enhancement_algorithm[0] == LIGHT_PIXEL and enhancement_algorithm[len(enhancement_algorithm)-1] == DARK_PIXEL
+
+
+def get_pad_char(default_infinite_char, is_blinking, iteration):
+    """
+    convenience method to work out what the pad char should be around the given image. This will indicate that the
+    infinite space should wither be dark or light. If it's identified that the codec causes the space to blink, then
+    depending on the default for the infinite space, and the iteration number, this could return the default or the
+    opposite value.
+    """
+    pad_char = default_infinite_char
+    if is_blinking and iteration % 2 == 1:
+        # blinking and an odd numbered iteration so flip the pad char
+        pad_char = LIGHT_PIXEL if default_infinite_char == DARK_PIXEL else DARK_PIXEL
+    return pad_char
 
 
 def process_image(iterations, enhancement_algorithm, image_array):
     """
     Used to apply the enhancement algorithm to image iterations number of times.
     """
+    is_blinking = is_blinking_image(enhancement_algorithm)
+
     tmp_image = image_array
     for iteration in range(iterations):
-        # print("<<<< Iteration " + str(iteration) + ">>>>")
-        # print('IN')
-        # for row in tmp_image:
-        #     print(''.join(row))
-        # print("tmp_image size = " + str(len(tmp_image)) + " " + str(len(tmp_image[0])))
-        tmp_image = pad_image(tmp_image)
+        pad_char = get_pad_char(DARK_PIXEL, is_blinking, iteration)
+        tmp_image = pad_image(tmp_image, pad_char)
 
         processed_outcome = []
         for row_pointer in range(1, len(tmp_image)-1):
             processed_row = []
             for cell_pointer in range(1, len(tmp_image[row_pointer])-1):
-
-                border_cell = is_border_cell(row_pointer, len(tmp_image)-1, cell_pointer, len(tmp_image[row_pointer])-1)
-
                 cell_block = get_cell_block(tmp_image, row_pointer, cell_pointer)
-                new_cell_value = get_new_cell_value(enhancement_algorithm, cell_block, border_cell, iteration)
-                # if iteration == 1:
-                #   print(str(cell_pointer) + "  " + str(row_pointer) + " " + str(border_cell) + "  " + ''.join(cell_block) + " ==> " + new_cell_value)
+                new_cell_value = get_new_cell_value(enhancement_algorithm, cell_block)
                 processed_row.append(new_cell_value)
             processed_outcome.append(processed_row)
         tmp_image = processed_outcome
-
-        # print('OUT')
-        # for row in tmp_image:
-        #     print(''.join(row))
     return tmp_image
 
 
 def get_result(processed_image):
+    """
+    analyse the processed image, counting the lit pixels
+    """
     result = 0
     for row in processed_image:
         for cell in row:
-            if cell == '#':
+            if cell == LIGHT_PIXEL:
                 result += 1
     return result
 
 
-if __name__ == '__main__':
-    # get file content
-    input_from_file = get_input('input.txt')
-
-    # input_from_file = ['..#.#..#####.#.#.#.###.##.....###.##.#..###.####..#####..#....#..#..##..###..######.###...####..#..#####..##..#.#####...##.#.#..#.##..#.#......#.###.######.###.####...#.##.##..#..#..#####.....#.#....###..#.##......#.....#..#..#..##..#...##.######.####.####.#.#...#.......#..#.#.#...####.##.#......#..#...##.#.##..#...##.#.##..###.#......#.#.......#.#.#.####.###.##...#.....####.#..#..#.##.#....##..#.####....##...##..#...#......#.#.......#.......##..####..#...#.#.#...##..#.#..###..#####........#..####......#..#',
-    #                    '',
-    #                    '#..#.',
-    #                    '#....',
-    #                    '##..#',
-    #                    '..#..',
-    #                    '..###']
+def process_file(filename, enhancement_iterations, expected_result, print_board):
+    """
+    Given a file, a number of enhancement iterations and an expected result, process the file based on the inputs and
+    assert that the result is as expected
+    """
+    input_from_file = get_input(filename)
 
     enhancement_algorithm = input_from_file[0]
     image = input_from_file[2:]
 
-    print(enhancement_algorithm)
-    print(image)
-
     image_array = convert_image_to_2d_array(image)
 
-    processed_image_2 = process_image(2, enhancement_algorithm, image_array)
+    processed_image = process_image(enhancement_iterations, enhancement_algorithm, image_array)
 
-    for row in processed_image_2:
-        print(''.join(row))
+    if print_board:
+        for row in processed_image:
+            print(''.join(row))
 
-    result = get_result(processed_image_2)
-    print("RESULT: " + str(result))
-    # is it which if these that are correct:
-    # 5231 (https://youtu.be/zDCLWtnW0Mg?t=1081) or
-    # 5354 (https://youtu.be/pT-m7jz_zm4?t=481) or
-    # 5846 (https://youtu.be/kw58sT4Ocos?t=1971)
-    # 5391? 5391? 5391? -> looks like this is my solution
+    result = get_result(processed_image)
 
-    processed_image_50 = process_image(50, enhancement_algorithm, image_array)
+    assert result == expected_result, 'Output is not as expected, expected ' + str(expected_result) + ' but got ' + str(result)
 
-    for row in processed_image_50:
-        print(''.join(row))
+    print('RESULT: after ' +str(enhancement_iterations) + ' iterations, ' + str(result) + ' pixels are lit for input ' + filename)
 
-    result = get_result(processed_image_50)
-    print("RESULT: " + str(result))
+
+if __name__ == '__main__':
+    process_file('input_example.txt', 2, 35, False)
+
+    process_file('input_example.txt', 50, 3351, False)
+
+    process_file('input.txt', 2, 5391, False)
+
+    process_file('input.txt', 50, 16383, False)
+
