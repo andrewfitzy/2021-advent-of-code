@@ -120,7 +120,7 @@ if __name__ == '__main__':
     """
 
     """
-    steps = 40
+    steps = 10
 
     # template = 'OOBFPNOPBHKCCVHOBCSO'
     template = 'NNCB'
