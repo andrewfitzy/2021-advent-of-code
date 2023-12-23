@@ -1,41 +1,3 @@
-"""
---- Part Two ---
-Unfortunately, considering only horizontal and vertical lines doesn't give you the full picture; you need to also consider diagonal lines.
-
-Because of the limits of the hydrothermal vent mapping system, the lines in your list will only ever be horizontal, vertical, or a diagonal line at exactly 45 degrees. In other words:
-
-An entry like 1,1 -> 3,3 covers points 1,1, 2,2, and 3,3.
-An entry like 9,7 -> 7,9 covers points 9,7, 8,8, and 7,9.
-Considering all lines from the above example would now produce the following diagram:
-
-1.1....11.
-.111...2..
-..2.1.111.
-...1.2.2..
-.112313211
-...1.2....
-..1...1...
-.1.....1..
-1.......1.
-222111....
-You still need to determine the number of points where at least two lines overlap. In the above example, this is still anywhere in the diagram with a 2 or larger - now a total of 12 points.
-
-Consider all of the lines. At how many points do at least two lines overlap?
-"""
-
-
-def get_input(filename):
-    """
-    Takes a filename and returns a list of lines from the file
-    """
-    output = []
-    with open(filename) as f:
-        for line in f:
-            tmp_line = line.strip()
-            output.append(tmp_line)
-    return output
-
-
 def process_input(input_from_file):
     """
     Takes an input and converts to a dict, discarding any inputs where x1 != x2 and y1 != y2
@@ -165,26 +127,8 @@ def get_result(map):
     return result
 
 
-if __name__ == "__main__":
-    # get file content
-    input_from_file = get_input("input.txt")
-
-    # input_from_file = ['0,9 -> 5,9',
-    # '8,0 -> 0,8',
-    # '9,4 -> 3,4',
-    # '2,2 -> 2,1',
-    # '7,0 -> 7,4',
-    # '6,4 -> 2,0',
-    # '0,9 -> 2,9',
-    # '3,4 -> 1,4',
-    # '0,0 -> 8,8',
-    # '5,5 -> 8,2']
-
-    processed_input = process_input(input_from_file)
-
+def solve(file_content):
+    processed_input = process_input(file_content)
     map = plot_coords(processed_input)
-    # for row in map:
-    #     print(row)
-
     result = get_result(map)
-    print("RESULT: " + str(result))
+    return result

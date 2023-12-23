@@ -1,57 +1,3 @@
-"""
---- Part Two ---
-Next, you need to find the largest basins so you know what areas are most important to avoid.
-
-A basin is all locations that eventually flow downward to a single low point. Therefore, every low point has a basin, although some basins are very small. Locations of height 9 do not count as being in any basin, and all other locations will always be part of exactly one basin.
-
-The size of a basin is the number of locations within the basin, including the low point. The example above has four basins.
-
-The top-left basin, size 3:
-
-2199943210
-3987894921
-9856789892
-8767896789
-9899965678
-The top-right basin, size 9:
-
-2199943210
-3987894921
-9856789892
-8767896789
-9899965678
-The middle basin, size 14:
-
-2199943210
-3987894921
-9856789892
-8767896789
-9899965678
-The bottom-right basin, size 9:
-
-2199943210
-3987894921
-9856789892
-8767896789
-9899965678
-Find the three largest basins and multiply their sizes together. In the above example, this is 9 * 14 * 9 = 1134.
-
-What do you get if you multiply together the sizes of the three largest basins?
-"""
-
-
-def get_input(filename):
-    """
-    Takes a filename and returns a list of lines from the file
-    """
-    output = []
-    with open(filename) as f:
-        for line in f:
-            tmp_line = line.strip()
-            output.append(tmp_line)
-    return output
-
-
 def make_chart(input):
     """
     Takes a filename and returns a list of ints from the file
@@ -224,7 +170,6 @@ def get_basins(chart, low_points):
 
     visited_cells = set()
     for basin_id in low_points:
-        print("PROCESS BASIN: " + str(basin_id))
         low_point = low_points.get(basin_id)
         low_point_coordinate = str(low_point["col"]) + "," + str(low_point["row"])
         if low_point_coordinate not in visited_cells:
@@ -245,27 +190,9 @@ def calculate_map_score(basins):
     return basin_sizes[0] * basin_sizes[1] * basin_sizes[2]
 
 
-if __name__ == "__main__":
-    # get file content
-    input_from_file = get_input("input.txt")
-
-    # input_from_file = ['2199943210',
-    #                    '3987894921',
-    #                    '9856789892',
-    #                    '8767896789',
-    #                    '9899965678']
-
-    chart = make_chart(input_from_file)
+def solve(file_content):
+    chart = make_chart(file_content)
     low_points = get_low_points(chart)
-
-    print("low_points")
-    print(low_points)
-
     basins = get_basins(chart, low_points)
-
-    print("basins")
-    print(basins)
-
     map_score = calculate_map_score(basins)
-
-    print("Map score: " + str(map_score))
+    return map_score

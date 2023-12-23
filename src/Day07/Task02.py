@@ -1,35 +1,7 @@
-"""
---- Part Two ---
-The crabs don't seem interested in your proposed solution. Perhaps you misunderstand crab engineering?
-
-As it turns out, crab submarine engines don't burn fuel at a constant rate. Instead, each change of 1 step in horizontal position costs 1 more unit of fuel than the last: the first step costs 1, the second step costs 2, the third step costs 3, and so on.
-
-As each crab moves, moving further becomes more expensive. This changes the best horizontal position to align them all on; in the example above, this becomes 5:
-
-Move from 16 to 5: 66 fuel
-Move from 1 to 5: 10 fuel
-Move from 2 to 5: 6 fuel
-Move from 0 to 5: 15 fuel
-Move from 4 to 5: 1 fuel
-Move from 2 to 5: 6 fuel
-Move from 7 to 5: 3 fuel
-Move from 1 to 5: 10 fuel
-Move from 2 to 5: 6 fuel
-Move from 14 to 5: 45 fuel
-This costs a total of 168 fuel. This is the new cheapest possible outcome; the old alignment position (2) now costs 206 fuel instead.
-
-Determine the horizontal position that the crabs can align to using the least fuel possible so they can make you an escape route! How much fuel must they spend to align to that position?
-"""
-
-
-def get_file_input(filename):
-    """
-    Takes a filename and returns a list of ints from the file
-    """
+def get_crabs(file_content):
     input = ""
-    with open(filename) as f:
-        for line in f:
-            input = input + line.strip()
+    for line in file_content:
+        input = input + line.strip()
     char_list = input.split(",", -1)
     char_mapped_to_int = map(int, char_list)
     return list(char_mapped_to_int)
@@ -66,23 +38,18 @@ def get_crabs_extremes(crabs):
     }
 
 
-if __name__ == "__main__":
+def solve(file_content):
     # get file content
-    crabs = get_file_input("input.txt")
+    crabs = get_crabs(file_content)
 
     # find lowest and highest numbers, no point starting lower than lowest or going higher then highest
     crab_extremes = get_crabs_extremes(crabs)
 
-    best_outcome_index = 0
     best_outcome = 999999999999
     index = crab_extremes["lowest"]
     while index < crab_extremes["highest"]:
         fuel_cost = get_fuel_cost(crabs, index)
         if fuel_cost < best_outcome:
             best_outcome = fuel_cost
-            best_outcome_index = index
-
         index += 1
-
-    print("Use this horizontal position: " + str(best_outcome_index))
-    print("Will cost this fuel overall: " + str(best_outcome))
+    return best_outcome

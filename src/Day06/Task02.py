@@ -1,21 +1,10 @@
-"""
---- Part Two ---
-Suppose the lanternfish live forever and have unlimited food and space. Would they take over the entire ocean?
-
-After 256 days in the example above, there would be a total of 26984457539 lanternfish!
-
-How many lanternfish would there be after 256 days?
-"""
-
-
-def get_file_input(filename):
+def get_fishies(file_content):
     """
-    Takes a filename and returns a list of ints from the file
+    Takes a string array and returns a list of ints from the file
     """
     input = ""
-    with open(filename) as f:
-        for line in f:
-            input = input + line.strip()
+    for line in file_content:
+        input = input + line.strip()
     char_list = input.split(",", -1)
     char_mapped_to_int = map(int, char_list)
     return list(char_mapped_to_int)
@@ -78,15 +67,8 @@ def process_fishies(fishies, days):
     return get_total_fishies(fishies_tracker)
 
 
-if __name__ == "__main__":
-    # define days
+def solve(file_content):
     days = 256
-
-    # get file content
-    fishies = get_file_input("input.txt")
-
-    # process
+    fishies = get_fishies(file_content)
     number_of_fish = process_fishies(fishies, days)
-
-    # print the answer
-    print("Total fishies after " + str(days) + " days: " + str(number_of_fish))
+    return number_of_fish

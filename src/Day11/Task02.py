@@ -1,62 +1,5 @@
-"""
---- Day 11: Dumbo Octopus ---
---- Part Two ---
-It seems like the individual flashes aren't bright enough to navigate. However, you might have a better option: the flashes seem to be synchronizing!
-
-In the example above, the first time all octopuses flash simultaneously is step 195:
-
-After step 193:
-5877777777
-8877777777
-7777777777
-7777777777
-7777777777
-7777777777
-7777777777
-7777777777
-7777777777
-7777777777
-
-After step 194:
-6988888888
-9988888888
-8888888888
-8888888888
-8888888888
-8888888888
-8888888888
-8888888888
-8888888888
-8888888888
-
-After step 195:
-0000000000
-0000000000
-0000000000
-0000000000
-0000000000
-0000000000
-0000000000
-0000000000
-0000000000
-0000000000
-If you can calculate the exact moments when the octopuses will all flash simultaneously, you should be able to navigate through the cavern. What is the first step during which all octopuses flash?
-"""
-
 LIGHT_PIXEL = "#"
 DARK_PIXEL = "."
-
-
-def get_input(filename):
-    """
-    Takes a filename and returns a list of lines from the file
-    """
-    output = []
-    with open(filename) as f:
-        for line in f:
-            tmp_line = line.strip()
-            output.append(tmp_line)
-    return output
 
 
 def convert_image_to_2d_array(image):
@@ -167,25 +110,13 @@ def process_steps(image_array):
             return synchronized_flash
 
 
-def process_file(filename, expected_result):
+def solve(file_content):
     """
     Given a file, a number of enhancement iterations and an expected result, process the file based on the inputs and
     assert that the result is as expected
     """
-    input_from_file = get_input(filename)
-
-    octopuses = convert_image_to_2d_array(input_from_file)
+    octopuses = convert_image_to_2d_array(file_content)
 
     synchronized_flash = process_steps(octopuses)
 
-    assert synchronized_flash == expected_result, (
-        "Output is not as expected, expected " + str(expected_result) + " but got " + str(synchronized_flash)
-    )
-
-    print("RESULT: Synchronized flash happens at step, " + str(synchronized_flash) + " for input " + filename)
-
-
-if __name__ == "__main__":
-    process_file("input_example.txt", 195)
-
-    process_file("input.txt", 437)
+    return synchronized_flash

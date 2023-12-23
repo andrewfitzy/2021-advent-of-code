@@ -1,11 +1,9 @@
-def get_calls_file(filename):
-    """
-    Takes a filename and returns a list of ints from the file
-    """
+def get_calls(file_content):
     input = ""
-    with open(filename) as f:
-        for line in f:
-            input = input + line.strip()
+    for line in file_content:
+        if len(line) == 0:
+            break
+        input = input + line.strip()
     char_list = input.split(",", -1)
     char_mapped_to_int = map(int, char_list)
     return list(char_mapped_to_int)
@@ -101,14 +99,16 @@ def process_board(board, calls):
     return -1  # should never happen for the puzzle
 
 
-def process_boards_file(filename, calls):
+def process_boards(file_content, calls):
     """
     will read in a board and then evaluate it
     """
     results_list = []
-    with open(filename) as f:
-        board = []
-        for line in f:
+
+    board = []
+    count = 0
+    for line in file_content:
+        if count >= 2:
             tmp_row = line.strip()
             if len(tmp_row) > 0:
                 char_list = tmp_row.split()
@@ -119,6 +119,7 @@ def process_boards_file(filename, calls):
                 result = process_board(board, calls)
                 results_list.append(result)
                 board = []
-        result = process_board(board, calls)
-        results_list.append(result)
+        count += 1
+    result = process_board(board, calls)
+    results_list.append(result)
     return results_list

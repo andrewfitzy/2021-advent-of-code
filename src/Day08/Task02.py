@@ -1,70 +1,4 @@
 """
---- Part Two ---
-Through a little deduction, you should now be able to determine the remaining digits. Consider again the first example above:
-
-acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab |
-cdfeb fcadb cdfeb cdbaf
-After some careful analysis, the mapping between signal wires and segments only make sense in the following configuration:
-
- dddd
-e    a
-e    a
- ffff
-g    b
-g    b
- cccc
-So, the unique signal patterns would correspond to the following digits:
-
-acedgfb: 8
-cdfbe: 5
-gcdfa: 2
-fbcad: 3
-dab: 7
-cefabd: 9
-cdfgeb: 6
-eafb: 4
-cagedb: 0
-ab: 1
-Then, the four digits of the output value can be decoded:
-
-cdfeb: 5
-fcadb: 3
-cdfeb: 5
-cdbaf: 3
-Therefore, the output value for this entry is 5353.
-
-Following this same process for each entry in the second, larger example above, the output value of each entry can be determined:
-
-fdgacbe cefdb cefbgd gcbe: 8394
-fcgedb cgb dgebacf gc: 9781
-cg cg fdcagb cbg: 1197
-efabcd cedba gadfec cb: 9361
-gecf egdcabf bgf bfgea: 4873
-gebdcfa ecba ca fadegcb: 8418
-cefg dcbef fcge gbcadfe: 4548
-ed bcgafe cdgba cbgef: 1625
-gbdfcae bgc cg cgb: 8717
-fgae cfgab fg bagce: 4315
-Adding all of the output values in this larger example produces 61229.
-
-For each entry, determine all of the wire/segment connections and decode the four-digit output values. What do you get if you add up all of the output values?
-"""
-
-"""
-get the letters for a 1
-get the letters for a 7
-* the difference is the top so can work out the letter for top
-get the letters for 4
-the difference between 4 and 7 gives middle and top left
-* letters for 4 and 7 are 1 away from 9 so can find out what bottom is
-* once we have 9, the difference between that and 8 is bottom left
-* get the other 6 letter codes, take away 1, top, bottom, bottom left, gives top left
-* using 4, take away 1 to give the middle
-* find 6 letter code, take away top, bottom, bottom left, top left, middle
-"""
-
-
-"""
 convert segments to a 2n value, used for generating unique values for numbers
 """
 segment_value = {
@@ -93,17 +27,6 @@ number_total = {
     "127": 8,
     "111": 9,
 }
-
-
-def get_file_content(filename):
-    """
-    Takes a filename and returns a list of ints from the file
-    """
-    output = []
-    with open(filename) as f:
-        for line in f:
-            output.append(line.strip())
-    return output
 
 
 def get_t(input_list):
@@ -297,10 +220,7 @@ def convert_output(config, output_list):
     return return_value
 
 
-if __name__ == "__main__":
-    # get file content
-    file_content = get_file_content("input.txt")
-
+def solve(file_content):
     output_list_total = 0
     for file_entry in file_content:
         input_output = file_entry.split("|", -1)
@@ -308,9 +228,8 @@ if __name__ == "__main__":
         output_list = input_output[1].split()
 
         config = process_input(input_list)
-        output = convert_output(config, output_list)
 
         decoded_output_list = convert_output(config, output_list)
         joined_decoded_output_list = "".join(decoded_output_list)
         output_list_total = output_list_total + int(joined_decoded_output_list)
-    print(output_list_total)
+    return output_list_total

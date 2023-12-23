@@ -1,50 +1,3 @@
-"""
---- Part Two ---
-After reviewing the available paths, you realize you might have time to visit a single small cave twice. Specifically, big caves can be visited any number of times, a single small cave can be visited at most twice, and the remaining small caves can be visited at most once. However, the caves named start and end can only be visited exactly once each: once you leave the start cave, you may not return to it, and once you reach the end cave, the path must end immediately.
-
-Now, the 36 possible paths through the first example above are:
-
-start,A,b,A,b,A,c,A,end
-start,A,b,A,b,A,end
-start,A,b,A,b,end
-start,A,b,A,c,A,b,A,end
-start,A,b,A,c,A,b,end
-start,A,b,A,c,A,c,A,end
-start,A,b,A,c,A,end
-start,A,b,A,end
-start,A,b,d,b,A,c,A,end
-start,A,b,d,b,A,end
-start,A,b,d,b,end
-start,A,b,end
-start,A,c,A,b,A,b,A,end
-start,A,c,A,b,A,b,end
-start,A,c,A,b,A,c,A,end
-start,A,c,A,b,A,end
-start,A,c,A,b,d,b,A,end
-start,A,c,A,b,d,b,end
-start,A,c,A,b,end
-start,A,c,A,c,A,b,A,end
-start,A,c,A,c,A,b,end
-start,A,c,A,c,A,end
-start,A,c,A,end
-start,A,end
-start,b,A,b,A,c,A,end
-start,b,A,b,A,end
-start,b,A,b,end
-start,b,A,c,A,b,A,end
-start,b,A,c,A,b,end
-start,b,A,c,A,c,A,end
-start,b,A,c,A,end
-start,b,A,end
-start,b,d,b,A,c,A,end
-start,b,d,b,A,end
-start,b,d,b,end
-start,b,end
-The slightly larger example above now has 103 paths through it, and the even larger example now has 3509 paths through it.
-
-Given these new rules, how many paths through this cave system are there?
-"""
-
 # Standard Library
 from collections import defaultdict
 
@@ -53,18 +6,6 @@ from src.util.timer import Timer
 
 START_NODE = "start"
 END_NODE = "end"
-
-
-def get_input(filename):
-    """
-    Takes a filename and returns a list of lines from the file
-    """
-    output = []
-    with open(filename) as f:
-        for line in f:
-            tmp_line = line.strip()
-            output.append(tmp_line)
-    return output
 
 
 def convert_sensor_reading_to_dictionary(sensor_graph):
@@ -200,33 +141,18 @@ def process_sensors(sensor_graph):
     return final_paths
 
 
-def process_file(filename, expected_result, print_result):
+def solve(file_content):
     """
     Given a file and an expected result, process the file and see if the number of paths matches the expected result
     """
     t = Timer()
     t.start()
-    input_from_file = get_input(filename)
 
-    sensor_graph = convert_sensor_reading_to_dictionary(input_from_file)
+    sensor_graph = convert_sensor_reading_to_dictionary(file_content)
 
     result = process_sensors(sensor_graph)
 
-    if print_result:
-        for row in result:
-            print(", ".join(row))
-
     result_length = len(result)
-    assert result_length == expected_result, (
-        "Output is not as expected, expected " + str(expected_result) + " but got " + str(result_length)
-    )
 
-    print("RESULT: there are " + str(result_length) + " paths for input " + filename)
     t.stop()
-
-
-if __name__ == "__main__":
-    process_file("input_example01.txt", 36, True)
-    process_file("input_example02.txt", 103, False)
-    process_file("input_example03.txt", 3509, False)
-    process_file("input.txt", 5254, False)
+    return result_length
