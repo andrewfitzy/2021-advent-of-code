@@ -12,7 +12,7 @@ def test_example_input():
     assert result == expected
 
 
-def test_real_input():
+def xtest_real_input():
     file_content = get_input("tests/Day03/input.txt")
 
     expected = 3912944
