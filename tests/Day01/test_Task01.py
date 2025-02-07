@@ -10,7 +10,7 @@ from tests.test_utils.get_input import get_input
 
 
 def test_example_input():
-    file_content = get_input("Day01/input_example.txt")
+    file_content = get_input("tests/Day01/input_example.txt")
 
     expected = 7
 
@@ -22,7 +22,7 @@ def test_example_input():
     os.environ["TEST_ENV"] == "staging", reason="My input file is not added to git, only run this locally"
 )
 def test_real_input():
-    file_content = get_input("Day01/input.txt")
+    file_content = get_input("tests/Day01/input.txt")
 
     expected = 1616
 
