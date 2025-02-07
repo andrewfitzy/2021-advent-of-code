@@ -4,7 +4,7 @@ from tests.test_utils.get_input import get_input
 
 
 def test_example01_input():
-    file_content = get_input("tests/Day12/input_example01.txt")
+    file_content = get_input("Day12/input_example01.txt")
 
     expected = 36
 
@@ -13,7 +13,7 @@ def test_example01_input():
 
 
 def test_example02_input():
-    file_content = get_input("tests/Day12/input_example02.txt")
+    file_content = get_input("Day12/input_example02.txt")
 
     expected = 103
 
@@ -22,7 +22,7 @@ def test_example02_input():
 
 
 def test_example03_input():
-    file_content = get_input("tests/Day12/input_example03.txt")
+    file_content = get_input("Day12/input_example03.txt")
 
     expected = 3509
 
@@ -32,7 +32,7 @@ def test_example03_input():
 
 # remove the x to run this test... if you have the time
 def xtest_real_input():
-    file_content = get_input("tests/Day12/input.txt")
+    file_content = get_input("Day12/input.txt")
 
     expected = 149385
 

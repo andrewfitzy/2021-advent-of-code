@@ -1,3 +1,9 @@
+# Specific ignores for this AoC repo
+input.txt
+
+# crappy Mac files
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

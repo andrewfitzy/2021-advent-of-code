@@ -4,7 +4,7 @@ from tests.test_utils.get_input import get_input
 
 
 def test_example_input():
-    file_content = get_input("tests/Day21/input_example.txt")
+    file_content = get_input("Day21/input_example.txt")
     expected = 739785
 
     result = solve(file_content)
@@ -12,7 +12,7 @@ def test_example_input():
 
 
 def xtest_real_input():
-    file_content = get_input("tests/Day21/input.txt")
+    file_content = get_input("Day21/input.txt")
 
     # 2 years later this gives a different result, it should be 742257, not sure why
     # setting to the wrong value to make the test pass

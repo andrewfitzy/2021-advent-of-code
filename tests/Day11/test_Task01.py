@@ -4,7 +4,7 @@ from tests.test_utils.get_input import get_input
 
 
 def test_example_input():
-    file_content = get_input("tests/Day11/input_example.txt")
+    file_content = get_input("Day11/input_example.txt")
 
     expected = 1656
 
@@ -13,7 +13,7 @@ def test_example_input():
 
 
 def xtest_real_input():
-    file_content = get_input("tests/Day11/input.txt")
+    file_content = get_input("Day11/input.txt")
 
     expected = 1594
 
