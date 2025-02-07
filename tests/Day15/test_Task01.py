@@ -5,14 +5,14 @@ import os
 import pytest
 
 # From apps
-from Day02.Task02 import solve
+from Day15.Task01 import solve
 from tests.test_utils.get_input import get_input
 
 
 def test_example_input():
-    file_content = get_input("Day02/input_example.txt")
+    file_content = get_input("tests/Day15/input_example.txt")
 
-    expected = 900
+    expected = 40
 
     result = solve(file_content)
     assert result == expected
@@ -22,9 +22,9 @@ def test_example_input():
     os.environ["TEST_ENV"] == "staging", reason="My input file is not added to git, only run this locally"
 )
 def test_real_input():
-    file_content = get_input("Day02/input.txt")
+    file_content = get_input("tests/Day15/input.txt")
 
-    expected = 2086261056
+    expected = 472
 
     result = solve(file_content)
     assert result == expected

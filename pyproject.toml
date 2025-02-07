@@ -70,3 +70,6 @@ import_heading_localfolder = "Local imports"
 [tool.pytest.ini_options]
 pythonpath = "src"
 testpaths = "tests"
+
+[tool.coverage.report]
+skip_empty = true
