@@ -29,10 +29,8 @@ def get_cheapest_path(start: Point, end: Point, maze: list[list[str]]) -> int:
     heapq.heappush(step_queue, PrioritizedItem(priority=0, point=start))
 
     seen = set()
-    count = 0  # 17,961,753
 
     while len(step_queue) > 0:
-        count = count + 1
         item = heapq.heappop(step_queue)
         if item.point == end:
             return item.priority
