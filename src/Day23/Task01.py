@@ -223,26 +223,8 @@ def get_available_moves(map, routes):
                     steps = path[1:]  # slicing as first element is the current space
                     target = steps[-1]
 
-                    # can the path be followed? if not return
-                    valid_path = True
-                    for step in steps:
-                        # are all the steps on the path empty?
-                        if content.VACANT != map[step.y][step.x]:
-                            valid_path = False
-                            break
-                    if not valid_path:
-                        # Process the next path
+                    if not is_valid_option(col, row, target, steps, map):
                         continue
-
-                    # Check if target is a hallway point, if it is we can skip room checks
-                    if target not in HALLWAY_STOP_POINTS:
-                        # check we're not moving around within rooms
-                        if target.y == 2 and row == 3:
-                            continue
-
-                        # Can the Amphipod move to the target room
-                        if not can_move_to_room(map[row][col], target, map):
-                            continue
 
                     # copy the map
                     target_map = deepcopy(map)
@@ -261,13 +243,30 @@ def get_available_moves(map, routes):
     return available_moves
 
 
-def can_move_to_room(item, target_location, floor_plan):
+def is_valid_option(col, row, target_location, path_to_target, floor_plan):
+    # get the contents of the target room
+    item = floor_plan[row][col]
+
     # Check the target is empty
     if floor_plan[target_location.y][target_location.x] != content.VACANT:
         return False
 
-    # check if target room is one for the amphipod
+    # can the path be followed? if not return
+    for step in path_to_target:
+        # are all the steps on the path empty?
+        if content.VACANT != floor_plan[step.y][step.x]:
+            return False
+
+    if target_location in HALLWAY_STOP_POINTS:
+        # Do this after checking we can get to the target.
+        return True
+
+    # If target isn't a stop point, its a room, check if target room is one for the amphipod
     if target_location not in TARGET_ROOMS[item]:
+        return False
+
+    # check we're not moving around inside the room
+    if target_location.y == 2 and row == 3:
         return False
 
     # check if target room is empty or contains only amphipods of the same type already
