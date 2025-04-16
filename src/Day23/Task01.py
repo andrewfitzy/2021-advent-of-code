@@ -1,7 +1,6 @@
 # Standard Library
 import heapq
 import types
-from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -227,7 +226,7 @@ def get_available_moves(map, routes):
                         continue
 
                     # copy the map
-                    target_map = deepcopy(map)
+                    target_map = [row[:] for row in map]
 
                     # modify the map to move the piece
                     target_map[target.y][target.x] = map[row][col]

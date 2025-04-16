@@ -25,9 +25,6 @@ test:
 test-file:
 	TEST_ENV=local pytest $(file)
 
-test-file:
-	TEST_ENV=local pytest $(file)
-
 compile-regular-dependencies:
 	@pip-compile --allow-unsafe --no-emit-index-url --resolver=backtracking requirements.in
 
