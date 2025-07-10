@@ -44,6 +44,8 @@ JUNCTIONS = {Point(3, 1), Point(5, 1), Point(7, 1), Point(9, 1)}
 
 HALLWAY_STOP_POINTS = {Point(1, 1), Point(2, 1), Point(4, 1), Point(6, 1), Point(8, 1), Point(10, 1), Point(11, 1)}
 
+HALLWAY = 1
+
 
 @dataclass(order=True)
 class PrioritizedItem:
@@ -92,11 +94,11 @@ def get_floor_plan(file_content):
 
 def build_all_routes(floor_plan):
     routes = {}
-    #############
-    # ...........#
-    ###B#C#B#D###
-    # A#D#C#A#
-    #########
+    # #############
+    # #...........#
+    # ###B#C#B#D###
+    #   #A#D#C#A#
+    #   #########
 
     # Build a list of possible routes, keyed on the start point and giving a route to the list of stopping points
     # for example
@@ -250,6 +252,14 @@ def is_valid_option(col, row, target_location, path_to_target, floor_plan):
     if floor_plan[target_location.y][target_location.x] != content.VACANT:
         return False
 
+    # check we're not moving around inside the hallway
+    if row == HALLWAY and target_location.y == row:
+        return False
+
+    # check we're not moving around inside the room
+    if target_location.y == 2 and row == 3:
+        return False
+
     # can the path be followed? if not return
     for step in path_to_target:
         # are all the steps on the path empty?
@@ -264,19 +274,20 @@ def is_valid_option(col, row, target_location, path_to_target, floor_plan):
     if target_location not in TARGET_ROOMS[item]:
         return False
 
-    # check we're not moving around inside the room
-    if target_location.y == 2 and row == 3:
-        return False
-
     # check if target room is empty or contains only amphipods of the same type already
     valid_contents = {item, content.VACANT}
     for target_room in TARGET_ROOMS[item]:
         if floor_plan[target_room.y][target_room.x] not in valid_contents:
             return False
 
-    # check if target is furthest into the room
-    if target_location.y == 2 and floor_plan[3][target_location.x] == content.VACANT:
-        return False
+    # # check if target is furthest into the room
+    # if target_location.y == 2 and floor_plan[3][target_location.x] == content.VACANT:
+    #     return False
+    remaining_rooms = range(target_location.y + 1, len(floor_plan))
+    for room in remaining_rooms:
+        if floor_plan[room][target_location.x] == content.VACANT:
+            # exit on first empty room found past the current one
+            return False
 
     # If all checks pass it's a valid move
     return True
