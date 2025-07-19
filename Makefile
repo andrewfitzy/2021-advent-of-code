@@ -33,3 +33,9 @@ compile-dev-dependencies:
 
 lint: black ruff isort
 compile-dependencies: compile-regular-dependencies compile-dev-dependencies
+
+install-dependencies:
+	PIP_INDEX_URL=https://pypi.python.org/simple pip install -r requirements-dev.txt
+
+commit:
+	PIP_INDEX_URL=https://pypi.python.org/simple git commit -a
