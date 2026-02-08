@@ -37,6 +37,5 @@ def solve(file_content):
     game["0"]["position"] = int(file_content[0].split(" ")[4])
     game["1"]["position"] = int(file_content[1].split(" ")[4])
     result = play_game(21, game["0"]["position"], game["0"]["score"], game["1"]["position"], game["1"]["score"])
-    print(result)
 
     return max(result)
