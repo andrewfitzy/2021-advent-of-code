@@ -6,7 +6,6 @@ def is_won(game, winning_mark):
 
 
 def get_moves(die):
-    # gets the moves
     i = 0
     rolls_total = 0
     while i < 3:
