@@ -11,6 +11,7 @@ from tests.test_utils.get_input import get_input
 
 def test_example_input():
     file_content = get_input("tests/Day21/input_example.txt")
+
     expected = 444356092776315
 
     result = solve(file_content)
