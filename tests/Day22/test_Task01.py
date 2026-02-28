@@ -27,6 +27,15 @@ def test_example_input_02():
     assert result == expected
 
 
+def test_example_input_03():
+    file_content = get_input("tests/Day22/input_example_03.txt")
+
+    expected = 474140
+
+    result = solve(file_content)
+    assert result == expected
+
+
 @pytest.mark.skipif(
     os.environ["TEST_ENV"] == "staging", reason="My input file is not added to git, only run this locally"
 )
