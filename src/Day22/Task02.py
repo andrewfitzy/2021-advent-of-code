@@ -1,6 +1,6 @@
 # Standard Library
-import math
 import re
+from collections import Counter
 
 
 class Cuboid:
@@ -26,17 +26,35 @@ class Cuboid:
             f"{self.operation} x={self.min_x}..{self.man_x},y={self.min_y}..{self.man_y},z={self.min_z}..{self.man_z}"
         )
 
+    def as_tuple(self):
+        return (self.min_x, self.max_x, self.min_y, self.max_y, self.min_z, self.max_z)
+
+    def intersects(self, area):
+        if (
+            (self.min_x <= area[1] and self.max_x >= area[0])
+            and (self.min_y <= area[3] and self.max_y >= area[2])
+            and (self.min_z <= area[5] and self.max_z >= area[4])
+        ):
+            return True
+        return False
+
+    def get_intersection_area(self, area):
+        inter_min_x = max(self.min_x, area[0])
+        inter_max_x = min(self.max_x, area[1])
+        inter_min_y = max(self.min_y, area[2])
+        inter_max_y = min(self.max_y, area[3])
+        inter_min_z = max(self.min_z, area[4])
+        inter_max_z = min(self.max_z, area[5])
+
+        if inter_min_x <= inter_max_x and inter_min_y <= inter_max_y and inter_min_z <= inter_max_z:
+            return (inter_min_x, inter_max_x, inter_min_y, inter_max_y, inter_min_z, inter_max_z)
+        return None
+
 
 def solve(file_content):
     pattern = r"(?P<operation>(on|off)) x=(?P<min_x>[-]?\d+)\.\.(?P<max_x>[-]?\d+),y=(?P<min_y>[-]?\d+)\.\.(?P<max_y>[-]?\d+),z=(?P<min_z>[-]?\d+)\.\.(?P<max_z>[-]?\d+)"
 
     cuboids = []
-    from_x = math.inf
-    to_x = -math.inf
-    from_y = math.inf
-    to_y = -math.inf
-    from_z = math.inf
-    to_z = -math.inf
     for line in file_content:
         match = re.match(pattern, line)
         results = match.groupdict()
@@ -58,43 +76,25 @@ def solve(file_content):
         )
         cuboids.append(cuboid)
 
-        from_x = min_x_int if min_x_int < from_x else from_x
-        to_x = max_x_int if max_x_int > to_x else to_x
-        from_y = min_y_int if min_y_int < from_y else from_y
-        to_y = max_y_int if max_y_int > to_y else to_y
-        from_z = min_z_int if min_z_int < from_z else from_z
-        to_z = max_z_int if max_z_int > to_z else to_z
-
-    print(f"x={from_x}..{to_x},y={from_y}..{to_y},z={from_z}..{to_z}")
-
-    to_x = to_x + 1
-    to_y = to_y + 1
-    to_z = to_z + 1
-
-    # initialise the uber cube
-    plan_dict = {}
-    for x in range(from_x, to_x):
-        y_dict = plan_dict.get(x, {})
-        for y in range(from_y, to_y):
-            z_dict = plan_dict.get(y, {})
-            for z in range(from_z, to_z):
-                z_dict[str(z)] = 0
-            y_dict[str(y)] = z_dict
-        plan_dict[str(x)] = y_dict
-
-    # set the values on/off for the cuboids
+    areas = Counter()
     for cuboid in cuboids:
-        for x in range(cuboid.min_x, cuboid.max_x + 1):
-            for y in range(cuboid.min_y, cuboid.max_y + 1):
-                for z in range(cuboid.min_z, cuboid.max_z + 1):
-                    plan_dict[str(x)][str(y)][str(z)] = cuboid.operation
+        updated_areas = Counter()
+        updated_areas[cuboid.as_tuple()] += cuboid.operation
 
-    # count the number of cubes that are on
+        for area, value in areas.items():
+            if cuboid.intersects(area):
+                intersection_area = cuboid.get_intersection_area(area)
+                updated_areas[intersection_area] -= value
+
+        areas.update(updated_areas)
+
     total = 0
-    for x_value in plan_dict.values():
-        for y_value in x_value.values():
-            for z_value in y_value.values():
-                if z_value == 1:
-                    total = total + 1
+
+    for area, value in areas.items():
+        total = total + (get_volume(area) * value)
 
     return total
+
+
+def get_volume(area):
+    return (area[1] - area[0] + 1) * (area[3] - area[2] + 1) * (area[5] - area[4] + 1)
