@@ -49,6 +49,9 @@ def test_process_model_number_04():
     assert result["z"] == 1
 
 
+@pytest.mark.skipif(
+    os.environ["TEST_ENV"] == "staging", reason="My input file is not added to git, only run this locally"
+)
 def test_process_model_number_05():
     file_content = get_input("tests/Day24/input.txt")
 
